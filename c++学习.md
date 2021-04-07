@@ -922,3 +922,569 @@ void text()
 
 ## (3)vector
 
+**vector支持随机访问**
+
+vector动态增长的基本原理：
+
+vector当插入新元素的时候如果空间不足，那么vector会重新申请更大的一块内存空间，将原来的数据拷贝到新空间，释放旧空间，再把元素插入新空间。
+
+构造函数
+
+```c++
+vector<T> v;              //采用模板实现类实现，默认构造函数
+vector(v.begin(),v.end()) //将begin与end之间的元素拷贝给本身
+vector(n,elem)            //构造函数将n个elem拷贝给本身
+vector(const vector &vec) //拷贝构造函数
+#include<vector>    
+void text()
+{
+    vector<int> vec;
+    int arr []= {1,2,3,4,5,6};
+    vector<int> vec1(arr,arr[sizeof(arr)/sizeof(arr[0])]);
+    vector<int> vec2(3,2);         //初始化3个2
+    vector<int> vec3(v2);
+    
+ for(vector<int>::inerator it = vec.begin();it != vec4.end();it++)
+ {
+     cour<<*it<<endl;
+ }
+}
+```
+
+赋值操作
+
+```c++
+assign(v.begin,v.end)   //将begin与end区间数据拷贝赋值给本身
+assign(n,elem)          //将n个emel赋值给本身
+vector &operator=(const vector &vec)  //重载赋值操作
+swap(vec);                            //将本身的值与vec交换 
+
+void text()
+{
+      int arr []= {1,2,3,4,5,6};
+      vector<int> v1(arr,arr[sizeof(arr)/sizeof(arr[0])]);
+    
+      vector<int> v2;
+      v2.assign(v1.begin(,v1.end()));
+    
+      vector<int> v3;
+      v3=v2;
+      
+      v3.swap(v2);                   //原理是将两个指针的指向进行交换
+}
+```
+
+大小
+
+```c++
+size();          //返回容器中的元素的个数
+empty();         //判断容器是否为空
+resize(int num); //重新指定容器的长度为num，若容器变长，则默认值填充新位置，若容器变短则删除末尾超出容器的元素被删除
+capacity();      //容器的容量
+reserver(int len);      //容器预留len个位置，预留位置不初始化不可访问
+
+void text()
+{
+    int arr[] = {1,2,3,4,5,6};
+    
+    vector<int> vec = arr;
+    cout<<"size"<<sizeof()<<endl;
+    if(vec.empty())
+    {
+        cout<<" "<<endl;
+    }
+}else
+{
+    cout<<"not"<<endl;
+}
+vex.resize(2);
+ for(vector<int>::inerator it = vec.begin();it != vec4.end();it++)
+ {
+     cour<<*it<<endl;
+ }                              //只能打印两个，后面的为0；
+ vec.resize(6);                 //改变大小补0
+ vecresize(6,1);                //后面的补1
+ vec.capacity();                //容量大于等于size 
+```
+
+数据存取操作
+
+```c++
+at(int index);  //返回索引index指向的数据，如果越界，抛出out_of_range异常
+operator[];     //返回索引所指向的值，越界时直接报错
+front();        //返回容器的第一个元素
+banck();        //返回容器的最后一个元素
+```
+
+插入与删除
+
+```c++
+insert(const iterator pos,int cont ,int elem) //迭代器指向位置插入count个num
+push_back();                 //尾插
+pop_back();                  //尾删
+erase(const iterator start,const iterator end); //删除迭代器start到end的值
+erase(const iterator pos);    //删除迭代器指向的元素
+clear();                      //清空容器
+void text()
+{
+    vector<int> v;
+    v.push_back(10);
+    v.push_back(20);
+    v.insert(v.begin(),30);
+    v.insert(v.end,40);
+    v.insert(v.begin()+2,100);   //vector支持随机访问
+    v.erase(v.begin());
+    v.erase(v.begin()+1,v.end());
+    v.clear();
+}
+```
+
+**当容器空间不足的时候会重新申请一片新的空间**
+
+swap缩减空间  **牛逼了**
+
+```c++
+void text()
+{
+    vector<int> v;
+    for(int i = 0; i < 10000;i++)
+    {
+        v.push_back();
+    }
+    cout<< "size" <<v.size()<<endl;
+    cout<<"capacity"<<v.capacity()<<endl;
+    
+    v.resize(10);                   //只改变size不改变容量
+    
+    cout<< "size" <<v.size()<<endl;
+    cout<<"capacity"<<v.capacity()<<endl;   //空间还是10000
+    
+    //收缩空间
+    vector<int> (v).swap(v);         //vextor<int> ()匿名对象用v去初始化  初始化完成之后用swqp交换   
+    cout<< "size" <<v.size()<<endl;
+    cout<<"capacity"<<v.capacity()<<endl;
+    
+    
+}
+```
+
+resize()于reserve()
+
+```c++
+void text()
+{
+    vector<int> v;
+    int *addr = nullptr;
+    int num = 0;
+    for(int i=0;i < 10000 ;i++)
+    {
+        v.push_back(i);
+        if(addr != &v[0])
+        {
+            addr = &v[0];
+            num++;
+        }
+    }                          //结论多次拷贝浪费时间
+    
+    v.reserve(10000);
+      for(int i=0;i < 10000 ;i++)
+    {
+        v.push_back(i);
+        if(addr != &v[0])
+        {
+            addr = &v[0];
+            num++;
+        }
+    }                         //少了拷贝释放的过程
+    
+}
+```
+
+## （4）deque双端队列
+
+尾部插入  push_back();
+
+尾部删除  pop_back();
+
+头部插入 push_front();
+
+头部删除 pop_front();
+
+迭代器：
+
+begin();      //类似于头指针    
+
+end();         //类似于尾指针
+
+方法：  
+
+front ();   //返回第一个元素
+
+back();     //返回最后一个元素
+
+**在两端插入删除效率高 ，中间的、移动的效率差， 和vector一样支持随机访问**
+
+deque构造函数
+
+```c++
+deque<T> deqT;				//默认构造形式
+deque(beg,end);       		//构造函数将beg与end之间的元素拷贝给本身
+deque(n,elem);              //构造函数将n个emel拷贝给本身
+deque(const deque &deq);    //拷贝构造函数
+
+
+void text()
+{
+    deque<int>  deq1;
+    
+    for(int i = 0;i < 10; i++);
+    {
+        deq.push_back(i);
+    }
+    deque deq2(que1.begin(),que1.end());
+    
+    deque que3.(que2);
+    
+    deque que4(3,10);
+}
+```
+
+deque  赋值
+
+```c++
+assign(beg,end);       //将beg到end的元素拷贝赋值给本身
+assign(n,elem);        //将n个elem个元素拷贝赋值给本身
+deque &operator=(const deque &deq);   //重载等号
+swap(deq);             //与deq本身的元素互换
+
+void text()
+{
+    deque<int> que1;
+    for(int i=0;i<100;i++)
+    {
+        que1.push_back(i);
+    }
+    
+    deque que2.assign(que1.begin(),que1.end());
+    
+    deque que3 = que2;
+    deque que4(10,5);
+    deque que5 .swap(que4);
+}
+```
+
+deque 大小操作
+
+```c++
+deque.size();     			//deque的大小
+deque.empty();				//deque是否为空
+deque.resize(num);			//重新指定容器，如果容器长度变长则采用默认值天聪位置如果容器长度都变短则删除尾部元素
+deque.resize(num,elem);     //重新指定容器大小，如果容器的长度变长则用elem填充，如果容器的长度变短则删除尾部元素
+```
+
+deque  双端插入和删除
+
+```c++
+push_back(elem);     //在容器的尾部插入数据
+push_front(elem);  	 //在容器的头部插入数据		
+pop_back(elem); 	 //在容器的尾部删除数据		
+pop_front(elem);  	 //在容器的头部删除数据
+
+void text()
+{
+    deque<int> que;
+    
+    que.push_back(1);
+    que.push_front(2);
+    que.pop_back();
+    que.pop_front();
+}
+```
+
+deque 数据的读取
+
+```c++
+at(idx);      //返回索引inx所指的值如果越界则抛出out_of_range
+operator[];   //返回索引inx所指的值如果越界不返回异常直接报错
+front();      //返回第一个元素的值
+back();		  //返回最后一个元素的值
+```
+
+deque的删除操作
+
+```c++
+clear();            //清空双端队列
+erase(beg,end);     //删除beg至end的数据
+erase(pos);			//删除pos位置的数据
+
+void text()
+{
+    deque<int> que;
+    for(int i = 0; i < 10 ; i++)
+    {
+        que.push_back(i);
+    }
+    
+    que.erase(que.begin(),que.end());
+    que.erase(pos);
+    que.clear();
+    
+}
+```
+
+**deque练习**
+
+```c++
+#include<iostream>
+#include<vector>
+#include<string>
+#include<deque>
+using namespace std;
+class Player
+{
+  public:
+    Player(string name,int score):mName(name),mScore(score){}
+  public:
+    string mName;
+    int mScore;
+};
+void Create_Player(vector<Player> &v)
+{
+    string str = "abcde";
+    for(int i = 0;i < 5;i++)
+    {
+        Player p;
+        p.mName = "选手";
+        p.mName += str[i];
+        p.mScore = 0;
+        
+        v.push_back(p);
+    }
+}
+void Set_Score(vector<Player> &v)
+{
+    
+    for(vector<Player>::iterator it = v.begin();it != v.end();it++)
+    {
+      deque<int> que;
+        for(int i = 0;i<10;i++)
+        {
+            int score = rand()%41+60;
+            que.push_back(score);
+        }
+        
+        sort(que.begin(),que.end());
+        que.pop_back();
+        que.pop_front();
+        
+        int avg = 0;
+  for(deque<int>::iterator dit = que.begin();dit != que.end();dit++)
+     {
+         avg += (*it);
+     }
+      avg = avg/que.size();
+      it->mScore = avg;
+    }
+}
+bool mycompare(Player &p1, Player &p2)
+{
+    return p1.mScore > p2.mScore;
+}
+void Print_Rank(vector<Player> &v)
+{
+    sort(v.begin(),v.end(),mycompare);
+    for(vector<int>:: iterator it = v.begin();it != v.end();it++)
+    {
+        cout<<"姓名"<<it->mName<<"分数"<<it->mScore<<endl;
+    }
+}
+int main()
+{
+    vector<Player>  vPlist;
+    Create_Player(vPlist);
+    Set_Score(vPlist);
+    Print_Rank(vPlist);
+}
+```
+
+
+
+## (5)stack
+
+**栈不能遍历，不能随机存取，只能top从栈顶获取和删除元素**
+
+stack构造函数
+
+```c++
+stack<T> sta; 				//stack采用模板类实现，stack对象的默认构造函数
+stack(const stack &sta); 	//拷贝构造函数
+
+void text()
+{
+    stack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    stack<int> sta1(sta);
+}
+```
+
+stack的赋值操作
+
+```c++
+stack &operator=(const stack &sta);   //重载等号操作符
+
+void text()
+{
+    stack<int> sta1;
+    sta1.push(1);
+    sta1.push(2);
+    stack<int> sta2 = sta1;
+}
+```
+
+stack增加、删除、访问、清空、数据
+
+```c++
+push(elem);    //压栈
+pop(); 		   //吐栈
+top(); 		   //取栈顶元素
+clear();       //清空栈
+void text()
+{
+    stack<int> sta;
+    sta.push(1);
+    sta,push(2);
+    sta.push(3);
+    
+    int elem = sta.top();
+    
+    sta.pop();
+    sta.clear();
+}
+```
+
+## (6)queue
+
+**先进先出，不能遍历，不提供迭代器，不支持随机访问**
+
+queue的构造函数
+
+```c++
+queue<T> que;				//queue采用模板类实现，queue对象的默认构造形式
+queue(const quque &que);	//拷贝构造
+
+void text()
+{
+    queue<int> que1;
+    queue<int> que2(que1);
+}
+```
+
+queue存取、插入和删除操作
+
+```c++
+push(elem);  	//往容器的末尾添加数据
+pop();			//从队头移除一个数据
+back();			//返回最后一个元素
+front();		//返回第一个元素
+
+void text()
+{
+    queue<int> que;
+    que.push(1);
+    que.push(2);
+    que.push(3);
+    que.pop();
+    que.back();
+    que.front();
+}
+```
+
+queue的赋值操作
+
+```c++
+queue &operator=(const queue &que);  //重载等号操作符
+
+void text()
+{
+    queue<int> que;
+    que.push(1);
+    
+    queue<int> que1(que);
+}
+```
+
+queue 容量及修改器
+
+```c++
+empty();   //判断是否为空 bool
+size();	   //返回queue的大小 int
+swap();    //交换元素
+```
+
+非成员函数
+
+```c++
+operator==
+operator!=
+operator<
+operator<=
+operator>
+operator>=
+按照字典顺序比较 queue 中的值
+```
+
+## (7)List
+
+**非连续添加删除元素方便，不用移动元素效率比数组高**
+
+**只要能拿到第一个节点就等于拿到整个链表**
+
+list的构造函数
+
+```c++
+list<int> li1;   			//list采用模板类实现，对象的默认构造形式
+list(beg,end);				//构造函数将beg，end区间中的元素拷贝给本身
+list(n,emel);				//构造函数将n个elem拷贝给本身
+list(const list &li);		//拷贝构造函数
+```
+
+list数据元素插入和删除操作
+
+```c++
+push_back(elem);    //尾插
+pop_back();		    //尾删
+pusn_front(elem);	//头插
+pop_front();		//头删
+insert(pos,elem);   //在pos位置插入elem，返回新数据的位置
+insert(pos,n,elem); //在pos位置插入n个elem，无返回值
+insert(pos,beg,end);//在pos位置插入beg与end之间的元素
+clear();            //移除容器中的所有元素
+erase(beg,end);     //移ben，end之间的元素，返回下一个元素的位置
+erase(pos);         //移除pos位置的元素
+remove(emel);		//删除容器中所有与elem元素相同的数字
+
+void text()
+{
+    list<int> mlist;
+    
+   for(int i = 0;i < 10; i++)
+   {
+       mlist.push_back(i);
+   }
+    insert(mlist.begin()+2,5);    //报错
+    list<int>::iterator li = mlist.begin();
+    li++;
+    li++;
+    insert(li,5);
+}
+```
+
+list的大小操作
+
+```c++
+size();         //容器的大小
+empty();		//容器是否为空
+resize(num);	//重新指定容器的大小，如果变长用默认值填充，变短则将尾部数据删除
+```
+
