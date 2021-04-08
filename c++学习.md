@@ -1436,7 +1436,7 @@ operator>=
 
 ## (7)List
 
-**非连续添加删除元素方便，不用移动元素效率比数组高**
+**非连续添加删除元素方便，不用移动元素效率比数组高、无迭代器**
 
 **只要能拿到第一个节点就等于拿到整个链表**
 
@@ -1463,6 +1463,8 @@ clear();            //移除容器中的所有元素
 erase(beg,end);     //移ben，end之间的元素，返回下一个元素的位置
 erase(pos);         //移除pos位置的元素
 remove(emel);		//删除容器中所有与elem元素相同的数字
+resize(num);	//重新指定容器的大小，如果变长用默认值填充，变短则将尾部数据删除
+resize(num,elem);  //重新指定容器的大小，如果变长用elem填充，变短则将尾部数据删除
 
 void text()
 {
@@ -1485,6 +1487,561 @@ list的大小操作
 ```c++
 size();         //容器的大小
 empty();		//容器是否为空
-resize(num);	//重新指定容器的大小，如果变长用默认值填充，变短则将尾部数据删除
+```
+
+list数据存储以及list反转排列序列
+
+```c++
+front();   			//返回第一个元素
+banck();			//返回最后一个元素
+reverse();          //反转单链表，比如list包含1，3，5元素，调用后变成5，3，1
+sort(); 			//排序，成员函数
+
+bool mycompare(int v1,int v2)
+{
+    return v1 > v2;
+}
+void text()
+{
+    list<int> mlist;
+    for(int i = 0; i < 10; i++)
+    {
+        mlist.push_back(i);
+    }
+    
+    mlist.reverse();        //完成反转
+    
+    mlist.(mlist);          //默认排序
+    mlist.sort(mycompare);  //设置的排序 
+    
+}
+```
+
+**算法sort   支持可随机访问的容器，因此list自己提供了sort**
+
+# 二叉树
+
+**概念**
+
+任何一个节点只有两个节点，分别是左节点和右节点
+
+**二叉搜索树**
+
+**平衡二叉树**
+
+
+
+# set/multiset 容器
+
+**set/multiset特性**
+
+set/multiset的特是所有**元素会根据元素的值进行自动排序**，set是以RB-tree(红黑树，平衡二叉树的一种)为底层机制，查找效率非常好。set容器中不允许重复的元素，multiset允许重复元素。
+
+**set不允许通过迭代器改变元素**因为，set是有序的集合，如果任意改变set的元素，会严重破坏set组织
+
+**set常用API**
+
+```C++
+set<T> st;				//set默认人拷贝构造
+mulitset<T> mst;		//multiset默认构造函数
+set(const set &st);		//拷贝构造函数
+```
+
+**set赋值操作**
+
+```c++
+set &operator=(const set &st);    //重载等号操作符
+swap(st);   					  //交换两个集合容器
+```
+
+**set大小操作**
+
+```c++
+size();                     		//返回容器中元素的大小
+empty();          					//判断容器是否为空
+```
+
+**set插入删除**
+
+```c++
+insert(elem);  			//在容器中插入元素
+clear();				//清除容器	
+erase(pos);				//删除pos迭代器所指的元素，返回下一个元素的迭代器
+erase(beg,end);			//删除beg到end之间的所有元素，返回下一个元素的迭代器
+erase(elem);			//删除容器中值为elem的元素
+
+void text()
+{
+    
+    set<int> st;
+    
+	st.insert(1);
+	st.insert(7);
+	st.insert(8);
+	st.insert(9);
+	st.insert(5);
+	st.erase(5);
+
+	for (set<int>::iterator it = st.begin(); it != st.end(); it++)
+	{
+		cout << *it;
+	}
+	cout << endl;
+	set<int>::iterator itb = st.begin();
+	itb++;
+	set<int>::iterator ite = st.end();
+	ite--;
+	st.erase(itb,ite);
+	for (set<int>::iterator it = st.begin(); it != st.end(); it++)
+	{
+		cout << *it;
+	}
+	cout << endl;
+	st.erase(9);
+	for (set<int>::iterator it = st.begin(); it != st.end(); it++)
+	{
+		cout << *it;
+	}
+}
+```
+
+**set查找操作**
+
+```c++
+find(key);        		//查找键key是否存在，若存在返回该键元素的迭代器，若不存在返回set.end();
+lower_bound(keyElem);   //返回第一个key>=keyElem元素的迭代器 *解引用即可
+upper_bound(keyElem);   //返回第一个key>keyElem元素的迭代器  *解引用即可
+equal_range(keyElem);   //返回容器中key与keyElem相等的上下限的两个迭代器
+//仿函数
+class mycompare
+{
+    public:
+    bool operator()(int v1,int v2)
+    {
+        return v1 > v2;
+    }
+}
+void text()
+{
+    set<int> st;    //从小到大
+    set<int,mycompare> st;    //从小到大
+    
+	st.insert(1);
+	st.insert(7);
+	st.insert(8);
+	st.insert(9);
+	st.insert(5);
+	st.erase(5);
+    
+    set<int>::iterator ret = st.find(4)
+     if(ret == st.end())
+     {
+         cout<<"没有找到！"<<endl;
+     }else
+     {
+         cout<<"ret"<<*ret<<endl;
+     }
+    
+    //equal_range 返回lower_bound 和 upper_bound 值
+ pair<set<int>::iterator,set<int>::iterator> myret = st.equal_range(2);
+    if(myret.fist == st.end())
+    {
+        cout<<"找到";
+    }else
+    {
+        cout<<"未找到";
+    }
+    if(myret.second == st.end())
+    {
+        cout<<"找到";
+    }else
+    {
+        cout<<"未找到";
+    }
+}
+```
+
+**set排序补充**
+
+```c++
+class Preson
+{
+  public:
+    Preson(int id,int age):id(id),age(age);
+  public:
+    int id;
+    int age;
+};
+class mycompare
+{
+  public:
+  bool operator()(Preson &p1,Preson &p2)
+  {
+      return p1.id > p2.id;
+  }
+};
+void text()
+{
+   /*set<Preson> pst;//set是自动排序的这样的话set不知道怎么排序，按照什么排序
+   
+    Preson p1(10,20),p2(20,30),p3(30,40),p4(40,50);
+    
+    pst.insert(p1);
+    pst.insert(p2);
+    pst.insert(p3);
+    pst.insert(p4);*/
+    
+    set<Preson，mycompare> pst;    //根据id排序   
+    Preson p1(10,20),p2(20,30),p3(30,40),p4(40,50);
+    
+    pst.insert(p1);
+    pst.insert(p2);
+    pst.insert(p3);
+    pst.insert(p4);
+    for(set<Preson,mucompare>::itrerator it = pst.begin();it != pst.end();it++)
+    {
+        cout<<it->age<<" "<< it->id<<endl;
+    }
+    set<Presom,mycompare>::iterator ret = pst.find(p4);   //find根据id查找因为是根据id排序的
+}
+```
+
+# map
+
+**map与multimap特性**  自动排序ss
+
+ map相对于set区别，map具有**键值**和**实值**，所有元素**根据键值自动排序**，pair的**第一元素被称为键值*****第二元素被称为实值**，map也是以红黑树为底层实现机制
+
+multimap **key是能重复的**
+
+**map不允许通过迭代器改变键值**因为，map是有序的集合，如果任意改变map的键值，会严重破坏map的组织，但是可以改变实值
+
+map与multimap区别在于，map不允许相同的key值存在，multimap允许相同的key值存在
+
+**对组**
+
+对组（pair）将一对值组合成一个值，这一对值可以具有不同的数据类型，两个值可以分别用pair的两个公有函数first和second访问
+
+**创建对组**
+
+```c++
+//第一种方法创建一个对组
+pair<string ,int> p1(string("name"),20);
+cout<< pair.first << endl;  //访问pair第一个值
+cout<< pair.second<<endl;   //访问pair第二个值
+//第二种
+pair<string ,int> p2=make_pair("name",30);
+cout<< pair.first << endl;  //访问pair第一个值
+cout<< pair.second<<endl;   //访问pair第二个值
+//第三种
+pair<string,int> p3 = p2;
+cout<< pair.first << endl;  //访问pair第一个值
+cout<< pair.second<<endl;   //访问pair第二个值 
+```
+
+
+
+类模板：template<class t1,class t2> struct pair;
+
+```c++
+
+```
+
+**map常用API**
+
+```c++
+map<T1,T2> m;                 //默认构造函数
+map(const map &m);            //拷贝构造
+
+void text()
+{
+    //map容器模板参数，第一个参数是key的类型，第二个参数是value类型
+    map<int,int> mymap;
+    
+    //插入排序  pair.fist key键值 pair.second value类型
+    //第一种
+    mymap.insert(pair<int,int>(10,10));
+    pair<map<int,int>::iterator,bool> ret = mymap.insert(pair<int,int>(10,10));
+    if(ret.second)
+    {
+        cout<<"插入成功"<<endl;
+    }else
+    {
+        cout<<"插入失败"<<endl;
+    }
+     pair<map<int,int>::iterator,bool> ret = mymap.insert(pair<int,int>(10,20));
+     if(ret.second)
+    {
+        cout<<"插入成功"<<endl;
+    }else
+    {
+        cout<<"插入失败"<<endl;
+    }
+    //第二种
+    mymap.insert(make_pair(20,20));
+    //第三种
+    mymap.insert(map<int,int>::value_type(30,30));
+    //第四种
+    mymap[40]=40;
+    mymap[10]=20;
+    //如果没有发现key不存在，创建pair插入到map容器中
+    //如果发现key存在，那么会修改key对应的value
+    //打印
+    
+  for(map<int,int>::iterator it = mymap.begin();it!=mymap.end();it++)
+  {
+   //*it取出来的是一个pair
+    cout << "key" <<it->first<<" "<<"value"<<it->second <<endl;
+  }
+    //如果通过[]方式去访问map中一个不存在key
+    //那么map会将这个访问的key插入到map中并且给value一个默认值0
+    cout<<"mymap[60]:" <<mymap[60] <<endl;
+    
+     for(map<int,int>::iterator it = mymap.begin();it!=mymap.end();it++)
+  {
+   //*it取出来的是一个pair
+    cout << "key" <<it->first<<" "<<"value"<<it->second <<endl;
+  }
+```
+
+map赋值操作
+
+```c++
+map &operator=(const map &m); //重载等号操作符
+swap(m);					  //交换两个集合容器
+```
+
+**map大小操作**
+
+```c++
+size();                       //返回容器中元素数目
+empty();					  //判断容器是否为空
+```
+
+**map插入数据元素操作**
+
+```c++
+insert();
+```
+
+**map查找操作**
+
+```c++
+find(key);        		//查找键key是否存在，若存在返回该键元素的迭代器，若不存在返回map.end();
+count(keyElem);   //返回容器中key为keyElem的对组的个数，对map来说要么是0要么是1对于multimap来说可能大于1
+lower_bound(keyElem);   //返回第一个key<=keyElem元素的迭代器 *解引用即可
+upper_bound(keyElem);   //返回第一个key>keyElem元素的迭代器  *解引用即可
+equal_range(keyElem);   //返回容器中key与keyElem相等的上下限的两个迭代器
+
+
+void text()
+{
+    map<int,int> mymap;
+     mymap.insert(make_pair(1,4));
+     mymap.insert(make_pair(2,5));
+     mymap.insert(make_pair(3,6));
+pair<map<int,int>::itrator,map<int,int>::iterator>mmap.equal_range(2) ret = mymap.equal_range(2);
+    if(ret.first->second)
+    {
+        cout<<"lower_bound";
+    }else
+    {
+        cout<<"no";
+    }
+        if(ret.second->second)
+    {
+        cout<<"lower_bound";
+    }else
+    {
+        cout<<"no";
+    }
+    
+}
+```
+
+**map补充**
+
+```c++
+class MyKey
+{
+    public: 
+    MyKey(int index;int id):mIndex(index),mID(id){};
+    public: 
+    int mIndex;
+    int mID;
+}
+class mycompare
+{
+    bool operator()(MyKey key1,MyKey key2)
+    {
+        return key1.mIndex > key2.mIndex;
+    }
+}
+void text02()
+{
+   /* map<MyKey,int> mymap;            //自动排序，咋排？？？？
+    mymap.insert(make_pair(MyKey(1,4),10));
+    mymap.insert(make_pair(MyKey(2,5),20));
+    mymap.insert(make_pair(MyKey(3,6),30));*/
+    map<MyKey,int,mycompare> mymap;            
+    mymap.insert(make_pair(MyKey(1,4),10));
+    mymap.insert(make_pair(MyKey(2,5),20));
+    mymap.insert(make_pair(MyKey(3,6),30));
+    for(map<MyKey,int,mycompare>::iterator it = mymap.begin();it != mymap.end();it++)
+    {
+        cout<< it->first.mIndex<<endl;
+    }
+}
+```
+
+
+
+**multimap案例**
+
+```c++
+#include<iostream>
+#include<map> 
+#include<set>
+#include<vector>
+#include<string>
+#include<time.h>
+#include<stdlib.h>
+using namespace std;
+
+//公司招用5个员工，5名员工进入公司后，需要指派员工在那个部门工作
+//人员信息有：姓名、年龄、电话、工资
+//通过multimap 进行信息的插入 保存 显示
+//分部门显示员工信息 显示全部员工信息
+
+#define SALE_DEPATMENT 1   //销售部门
+#define DEVELOP_DEPATMENT 2 //研发部门
+#define FINACIAL_DEPATMENT 3 //财务部门
+
+class Worker
+{
+public:
+	string name;
+	string mTele;
+	int age;
+	int mSalary;
+};
+
+void Create_Worker(vector<Worker> &vWorker)
+{
+	string name = "abcde";
+	for (int i = 0; i < 5; i++)
+	{
+		Worker worker;
+		worker.name = "员工";
+		worker.name += name[i];
+
+		worker.age = rand() % 10 + 20;
+		worker.mTele = "010-88888888";
+		worker.mSalary = rand() % 10000 + 10000;
+		vWorker.push_back(worker);
+	}
+}
+//员工分组
+void WorkerByGroup(vector<Worker>& vWorker, multimap<int, Worker>   &workGroup)
+{
+	srand(time(NULL));
+	//把员工部门分配不同的组
+	for (vector<Worker>::iterator it = vWorker.begin(); it != vWorker.end(); it++)
+	{
+		int depareID = rand() % 3 + 1;
+		switch (depareID) 
+		{
+		case 1:workGroup.insert(make_pair(SALE_DEPATMENT, *it));
+			break; 
+		case 2:workGroup.insert(make_pair(DEVELOP_DEPATMENT, *it));
+			break;
+		case 3:workGroup.insert(make_pair(FINACIAL_DEPATMENT, *it));
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void ShowWorks(multimap<int, Worker>& workGroup,int departID)
+{
+	 //打印销售部员工的信息
+	multimap<int, Worker>::iterator it = workGroup.find(departID);
+	int DepartCount = workGroup.count(SALE_DEPATMENT);
+	int num = 0;
+	for (multimap<int, Worker>::iterator pos = it; it != workGroup.end() && num < DepartCount; pos++, num++)
+	{
+		cout << pos->second.name << " " << pos->second.age << " " << pos->second.mTele << " " << pos->second.mSalary<<endl;
+	}
+}
+//打印一部分员工信息
+void PrintWorkerByGroup(multimap<int, Worker>   &workGroup)
+{
+	ShowWorks(workGroup,SALE_DEPATMENT);
+	cout << 1 << endl;
+	ShowWorks(workGroup, DEVELOP_DEPATMENT);
+	cout << 1 << endl;
+	ShowWorks(workGroup, FINACIAL_DEPATMENT);
+}
+int main()
+{
+	vector<Worker> vWorker;
+	//创建员工
+	//multimap保存分组信息
+	multimap<int, Worker>   workGroup;
+	Create_Worker(vWorker);***
+	//员工分组
+	WorkerByGroup(vWorker,workGroup);
+	//打印一部分员工信息
+	PrintWorkerByGroup(workGroup);
+}
+```
+
+# 容器的深拷贝浅拷贝问题
+
+类中有指针，如果要将对象放入容器，需要自己写赋值，拷贝构造函数否则会引发浅拷贝问题；
+
+```c++
+class Preson 
+{
+public:
+	Preson(const char* n, int ge)
+	{
+		this->age = ge;
+		name = new char[strlen(name)+1];
+		strcpy(this->name, n);
+	}
+	Preson(const Preson& p)
+	{
+		this->name = new char[strlen(name) + 1];
+		strcpy(this->name, p.name);
+	}
+	Preson& operator=(const  Preson &p)
+	{
+		if (nullptr != this->name)
+		{
+			delete[] this->name;
+		}this->age = p.age;
+		name = new char[strlen(name) + 1];
+		strcpy(this->name, p.name);
+	}
+	~Preson()
+	{
+		if (nullptr != this->name)
+		{
+			delete[] name;
+		}
+		this->name = nullptr;
+	}
+public:
+	char *name;
+	int age;
+};
+int main()
+{
+	Preson p("AAA",50);
+	vector<Preson> pp;
+	pp.push_back(p);
+}
 ```
 
