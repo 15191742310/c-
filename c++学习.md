@@ -2,7 +2,7 @@
 
 # 模板
 
-# （1）模板的应用1234
+## （1）模板的应用
 
 ```c++
 template <typename T>  //为了让编译器区分是普通函数，还是模板函数
@@ -1519,7 +1519,7 @@ void text()
 
 **算法sort   支持可随机访问的容器，因此list自己提供了sort**
 
-# 二叉树
+## 二叉树
 
 **概念**
 
@@ -1531,7 +1531,7 @@ void text()
 
 
 
-# set/multiset 容器
+## set/multiset 容器
 
 **set/multiset特性**
 
@@ -1706,9 +1706,9 @@ void text()
 }
 ```
 
-# map
+## map
 
-**map与multimap特性**  自动排序ss
+**map与multimap特性**  自动排序
 
  map相对于set区别，map具有**键值**和**实值**，所有元素**根据键值自动排序**，pair的**第一元素被称为键值*****第二元素被称为实值**，map也是以红黑树为底层实现机制
 
@@ -1997,7 +1997,7 @@ int main()
 }
 ```
 
-# 容器的深拷贝浅拷贝问题
+## 容器的深拷贝浅拷贝问题
 
 类中有指针，如果要将对象放入容器，需要自己写赋值，拷贝构造函数否则会引发浅拷贝问题；
 
@@ -2039,9 +2039,269 @@ public:
 };
 int main()
 {
-	Preson p("AAA",50);
-	vector<Preson> pp;
+	Preson p("AAA",5vector<Preson> pp;
 	pp.push_back(p);
+}
+```
+
+# 线程
+
+## 线程的简单使用
+
+创建的子线程可以共享住线程的堆区，代码区，数据区。
+
+线程的拥有权和线程的转移不矛盾，在任何时间都可以执行。
+
+**线程的活跃指的是**：无论阻塞，将亡，执行，只要句柄和内核关联就叫活跃。
+
+```c++
+#incliude<iostream>
+#include<thread>
+using namespace std;                        //简单的使用
+void fun(int n)
+{
+	for (int i = 0; i < 5; i++)
+	{	cout << "n1:" << n << endl;
+		n++;
+    }
+}
+void fun1(int n)
+{
+	for (int i = 0; i < 5; i++)
+	{
+		cout << "n2:" << n << endl;
+		n++;
+	}
+}
+int main()
+{
+	thread t1(fun, 0);
+	thread t2(fun1, 0);
+	t1.join();
+    t2.join();
+}
+```
+
+![image-20210418132906146](C:\Users\kaitian\AppData\Roaming\Typora\typora-user-images\image-20210418132906146.png)
+
+**线程的活跃指的是**：无论阻塞，将亡，执行，只要句柄和内核关联就叫活跃。
+
+  **t1.detach();**  当线程被剥离的时候，主线程结束，此线程会被强制结束。
+
+```c++
+void fun()
+{
+	cout << "fun" << this_thread::get_id() << endl;
+}
+int main()
+{
+	thread t1(fun);
+	cout << "main" << this_thread::get_id() << endl;
+	cout << "main" << t1.get_id() << endl;
+	cout << t1.joinable() << endl;   //判断是否活跃
+	t1.join();
+	cout << t1.joinable() << endl;
+	return 0;
+}
+-------------------------------------------
+ main:22316	
+ mian:1860
+ 1
+ fun:1860
+ 0
+ -------------------------------------------
+ int main()
+ {
+     thread t1(fun);
+     cout<<t1.joinable()<<endl;
+     t1.detach();
+     cout<<t1.joinable()<<endl;
+     return 0;
+ }
+```
+
+### 资源竞争
+
+```c++
+void fun(int &x)
+{
+	for (int i = 0; i < 10; i++)
+	{
+		cout << x << endl;
+		x++;
+	}
+}
+int main()
+{
+	int x = 10;
+	thread t1(fun, std::ref(x));
+	thread t2(fun, std::ref(x));
+	t1.join();
+	t2.join();
+	return 0;
+}
+---------------------------------------
+输出结果不确定，出现了资源的竞争，非原子性
+解决方案：
+ mutex g_mut;
+ void fun(int &x)
+{
+     g_mut.lock();
+	for (int i = 0; i < 10; i++)
+	{
+		cout << x << endl;
+		x++;
+	}
+     g_mut.unlock();
+}
+int main()
+{
+	int x = 10;
+	thread t1(fun, std::ref(x));
+	thread t2(fun, std::ref(x));
+	t1.join();
+	t2.join();
+	return 0;
+}   
+```
+
+### 线程化调用对象的函数
+
+```c++
+class Object
+{
+private:
+	int value;
+public:
+	Object(int x = 0):value(x){}
+	~Object(){}
+	void show()const
+	{
+		cout << "show" << value << endl;
+	}
+};
+int mian()
+{
+	Object obj(10);
+	thread t1(&Object::show,&obj);
+	t1.join();
+	return 0;
+}
+```
+
+### 或者
+
+```c++
+class Object
+{
+private:
+	int value;
+public:
+	Object(int x = 0):value(x){}
+	~Object(){}
+	void show()const
+	{
+		cout << "show" << value << endl;
+	}
+};
+void fun()
+{
+    Object obj(10);
+}
+int mian()
+{
+	Object obj(10);
+	thread t1(fun);
+	t1.join();
+	return 0;
+}
+```
+
+### 线程调用仿函数
+
+```c++
+#include <iostream>
+#include<thread>
+#include<mutex>
+using namespace std;
+class Object
+{
+public:
+	void operator()()
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			cout << "operator" << endl;
+		}
+	}
+};
+int mian()
+{
+	Object obj;
+	thread t1(std::ref(obj));
+	t1.join();
+	return 0;
+}
+```
+
+### 将对象线程化
+
+```c++
+class Object
+{
+public:
+	static void run()
+	{
+		Object obj;
+	}
+};
+int main()
+{
+
+	thread t1(Object::run);
+	t1.join();
+	return 0;
+}
+```
+
+### 锁的简单使用
+
+**std::lock_guard<std::mutex> lock(g_mut);**   当函数自行完毕解锁。
+
+```c++
+#include <iostream>
+#include<thread>
+#include<mutex>
+using namespace std;
+mutex g_mut;
+void fun(char ch)
+{
+	std::lock_guard<std::mutex> lock(g_mut);
+	for (int i = 0; i < 5; i++)
+	{
+		int j = 0;
+		while (j < 10)
+		{
+			cout << ch;
+			j++;
+		}
+		cout << endl;
+	}
+	
+}
+int main()
+{
+	thread mth[5];
+	for (int i = 0; i < 5; i++)
+	{
+		g_mut.lock();
+		mth[i]=thread(fun,'a'+i);
+		g_mut.unlock();
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		mth[i].join();
+	}
 }
 ```
 
